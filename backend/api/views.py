@@ -62,3 +62,34 @@ def get_user_images(request):
     images = UserImage.objects.filter(user=request.user).order_by('-uploaded_at')
     serializer = UserImageSerializer(images, many=True)
     return Response(serializer.data)
+
+from django.http import FileResponse, Http404
+import cv2 as cv
+import numpy as np
+from io import BytesIO
+from .utils.decrypt import decrypt
+
+class DecryptImageView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, image_id):
+        try:
+            user_image = UserImage.objects.get(id=image_id, user=request.user)
+        except UserImage.DoesNotExist:
+            raise Http404("Encrypted image not found for this user.")
+
+        # Read the encrypted image into OpenCV format
+        image_bytes = user_image.image.read()
+        salt = user_image.key
+        np_arr = np.frombuffer(image_bytes, np.uint8)
+        enc_img = cv.imdecode(np_arr, cv.IMREAD_COLOR)
+
+        # Decrypt the image using your function
+        dec_img = decrypt(enc_img, "Test@123", salt)
+
+        # Encode the image back to memory buffer
+        _, buffer = cv.imencode(".png", dec_img)
+        img_io = BytesIO(buffer.tobytes())
+
+        # Return image as response
+        return FileResponse(img_io, content_type='image/png', filename="decrypted.png")

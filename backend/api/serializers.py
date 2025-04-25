@@ -18,5 +18,5 @@ from .models import UserImage
 class UserImageSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserImage
-        fields = ['id', 'user', 'image', 'key', 'uploaded_at']
+        fields = ['id', 'image', 'title', 'key', 'uploaded_at']
         read_only_fields = ['user', 'uploaded_at']
