@@ -10,6 +10,6 @@ def uploaded_file_to_cv2_image(uploaded_file):
     img = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)  # or cv2.IMREAD_GRAYSCALE
     return img
 
-def enc(file, key="password"): 
+def enc(file, key="password", salt="salt"): 
     
-    return process_image(uploaded_file_to_cv2_image(file), key)
+    return process_image(uploaded_file_to_cv2_image(file), key, salt)

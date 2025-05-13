@@ -1,45 +1,31 @@
 import React from 'react';
-import { Container, Box } from '@mui/material';
-import UploadForm from '../components/ImageUploader/UploadForm';
+import { Container } from '@mui/material';
+import ImageGallery from '../components/ImageUploader/ImageGallery';
 import DecryptModal from '../components/ImageUploader/DecryptModal';
 import NotificationSnackbar from '../components/ImageUploader/NotificationSnackbar';
 import useImageUploader from '../components/ImageUploader/useImageUploader';
 
-const Home = () => {
+const Gallery = () => {
   const {
-    title,
-    selectedFile,
+    images,
     showModal,
     decryptedImage,
     notification,
     loading,
-    handleTitleChange,
-    handleFileChange,
-    handleUpload,
+    handleImageClick,
+    handleDeleteImage,
     closeModal,
     closeNotification
   } = useImageUploader();
 
   return (
-    <Container 
-      maxWidth="sm" 
-      sx={{ 
-        py: 4,
-        minHeight: 'calc(100vh - 64px)',
-        display: 'flex',
-        alignItems: 'center'
-      }}
-    >
-      <Box width="100%">
-        <UploadForm
-          title={title}
-          selectedFile={selectedFile}
-          loading={loading}
-          onTitleChange={handleTitleChange}
-          onFileChange={handleFileChange}
-          onUpload={handleUpload}
-        />
-      </Box>
+    <Container maxWidth="md" sx={{ py: 4 }}>
+      <ImageGallery 
+        images={images}
+        loading={loading}
+        onImageClick={handleImageClick}
+        onDeleteImage={handleDeleteImage}
+      />
       
       <DecryptModal
         open={showModal}
@@ -57,4 +43,4 @@ const Home = () => {
   );
 };
 
-export default Home;
+export default Gallery;

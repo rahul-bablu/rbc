@@ -159,15 +159,14 @@ enc_matrix = [['L', 'R', 'U', 'D'],
 
 from django.core.files.base import ContentFile
 
-def process_image(img, key):
+def process_image(img, key, salt):
     rows, cols, _ = img.shape
-    random_id = uuid.uuid4().hex
 
     # Your existing encryption keys
     # k1 = "01010100011010000110000101110100011100110010000001101101011110010010000001001011011101010110111001100111001000000100011001110101"
     # k2 = "11100010001100101111110011110001100100010001001010010001100010001011000101011001111001001110011011010110011110011010001010010011"
     k1 = string_to_binary_key(key)
-    k2 = string_to_binary_key(random_id)
+    k2 = string_to_binary_key(salt)
     for block_size in blocks:
         newk1, newk2 = k1, k2
         for i in range(0, rows, block_size):
@@ -181,10 +180,10 @@ def process_image(img, key):
 
     # Save encrypted image to memory
     _, encrypted_buffer = cv.imencode('.png', img)
-    encrypted_file = ContentFile(encrypted_buffer.tobytes(), name=f"encrypted_{random_id}.png")
+    encrypted_file = ContentFile(encrypted_buffer.tobytes(), name=f"encrypted_{salt}.png")
 
 
-    return encrypted_file, random_id
+    return encrypted_file, salt
 
 if __name__ == "__main__":
     import matplotlib.pyplot as plt
